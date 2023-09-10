@@ -1,0 +1,24 @@
+version: "3"
+services: 
+  iwa-test:
+    container_name: iwa-test
+    image: iwa
+    deploy:
+      resources:
+        limits: ## The platform must prevent the container to allocate more
+          cpus: '0.40'
+          memory: 400mb
+          pids: 50 ## container's PIDs limit
+      restart_policy:
+        condition: on-failure 
+        delay: 60s ## How many times to attempt to restart a container before giving up
+        max_attempts: 3 ## How many times to attempt to restart a container before giving up
+        window: 60s ## How long to wait before deciding if a restart has succeeded
+    ports:
+      - "8888:8080"
+    healthcheck:
+      test: bash -c 'echo -n > /dev/tcp/127.0.0.1/8080' || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
