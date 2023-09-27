@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-iwa-java
+  namespace: web-team-dev
+spec:
+  selector:
+    matchLabels:
+      app: demo-iwa-java
+  template:
+    metadata:
+      labels:
+        app: demo-iwa-java
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: demo-iwa-java
+        image: bankierubybank/iwa-java:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "300Mi"
+            cpu: "250m"
+        env:
+          - name: node
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: namespace
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        ports:
+        - containerPort: 8080
+          protocol: TCP
